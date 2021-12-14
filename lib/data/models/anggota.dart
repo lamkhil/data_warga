@@ -16,8 +16,9 @@ class Anggota {
   static const String kolomPEKERJAAN = 'PEKERJAAN';
   static const String kolomSTATUS = 'STATUS';
   static const String kolomDOMISILI = 'DOMISILI';
+  static const String kolomCATATAN = 'CATATAN';
 
-  String nik;
+  String? nik;
   String nama;
   String tglLahir;
   String noRumah;
@@ -28,9 +29,10 @@ class Anggota {
   String pekerjaan;
   String status;
   String domisili;
+  String? catatan;
 
   Anggota(
-      {required this.nik,
+      {this.nik,
       required this.alamat,
       required this.domisili,
       required this.jk,
@@ -40,7 +42,8 @@ class Anggota {
       required this.rt,
       required this.rw,
       required this.status,
-      required this.tglLahir});
+      required this.tglLahir,
+      this.catatan});
 
   factory Anggota.fromMap(Map map) => Anggota(
       nik: map[kolomNIK],
@@ -59,7 +62,8 @@ class Anggota {
       status: map[kolomSTATUS] is int
           ? Status.statusString(map[kolomSTATUS])
           : map[kolomSTATUS],
-      tglLahir: map[kolomTGLLAHIR]);
+      tglLahir: map[kolomTGLLAHIR],
+      catatan: map[kolomCATATAN]);
 
   Map<String, dynamic> toMap() => {
         kolomNIK: nik,
@@ -72,7 +76,8 @@ class Anggota {
         kolomRT: rt,
         kolomRW: rw,
         kolomSTATUS: Status.statusID(status),
-        kolomTGLLAHIR: tglLahir
+        kolomTGLLAHIR: tglLahir,
+        kolomCATATAN: catatan
       };
 
   Map<String, dynamic> toMapString() => {
@@ -86,7 +91,8 @@ class Anggota {
         kolomRT: rt,
         kolomRW: rw,
         kolomSTATUS: status,
-        kolomTGLLAHIR: tglLahir
+        kolomTGLLAHIR: tglLahir,
+        kolomCATATAN: catatan
       };
 
   factory Anggota.empty() => Anggota(
@@ -100,5 +106,6 @@ class Anggota {
       rt: '',
       rw: '',
       status: '',
-      tglLahir: '');
+      tglLahir: '',
+      catatan: '');
 }

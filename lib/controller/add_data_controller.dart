@@ -1,3 +1,4 @@
+import 'package:data_warga/controller/controller.dart';
 import 'package:data_warga/data/database/database_helper.dart';
 import 'package:data_warga/data/models/anggota.dart';
 import 'package:data_warga/data/models/status.dart';
@@ -18,11 +19,12 @@ class AddDataController extends GetxController {
     Anggota.kolomNORUMAH: TextEditingController(),
     Anggota.kolomRT: TextEditingController(),
     Anggota.kolomRW: TextEditingController(),
+    Anggota.kolomCATATAN: TextEditingController(),
     Anggota.kolomDOMISILI: null,
     Anggota.kolomJK: null,
     Anggota.kolomPEKERJAAN: null,
     Anggota.kolomSTATUS: null,
-    Anggota.kolomTGLLAHIR: null
+    Anggota.kolomTGLLAHIR: TextEditingController()
   };
 
   @override
@@ -48,19 +50,8 @@ class AddDataController extends GetxController {
     super.onClose();
   }
 
-  final RxMap<String, dynamic> _addData = {
-    Anggota.kolomNIK: '',
-    Anggota.kolomALAMAT: '',
-    Anggota.kolomDOMISILI: '',
-    Anggota.kolomJK: '',
-    Anggota.kolomNAMA: '',
-    Anggota.kolomNORUMAH: '',
-    Anggota.kolomPEKERJAAN: '',
-    Anggota.kolomRT: '',
-    Anggota.kolomRW: '',
-    Anggota.kolomSTATUS: '',
-    Anggota.kolomTGLLAHIR: ''
-  }.obs;
+  final RxMap<String, dynamic> _addData =
+      {Anggota.kolomCATATAN: '', Anggota.kolomNIK: ''}.obs;
 
   void _getVariable() async {
     var res = await _db.query('variable_tetap');
@@ -70,13 +61,14 @@ class AddDataController extends GetxController {
         "KEL. ${res.first["KEL"].toString()} - KEC. ${res.first["KEC"].toString()} - KOTA ${res.first["KOTA"].toString()}";
   }
 
-  Map<String, dynamic> get addData => _addData;
+  RxMap<String, dynamic> get addData => _addData;
   void setAddData(String key, dynamic val) {
     _addData[key] = val;
-    if (_addData[Anggota.kolomNORUMAH] != "" &&
-        _addData[Anggota.kolomRT] != "" &&
-        _addData[Anggota.kolomRW] != "" &&
-        _addData[Anggota.kolomSTATUS] != "") {
+    if (_addData[Anggota.kolomNORUMAH] != null &&
+        _addData[Anggota.kolomRT] != null &&
+        _addData[Anggota.kolomRW] != null &&
+        _addData[Anggota.kolomSTATUS] != null &&
+        _addData[Anggota.kolomNAMA] != null) {
       if (!nextInput) {
         nextInput = true;
         chechkData();
@@ -90,10 +82,9 @@ class AddDataController extends GetxController {
     textController.forEach((key, value) {
       if (value != null) {
         value.text = '';
-      } else {
-        setAddData(key, '');
       }
     });
+    _addData.clear();
     nextInput = false;
     isUpdate = false;
   }
@@ -108,17 +99,21 @@ class AddDataController extends GetxController {
   set isUpdate(bool val) => _isUpdate.value = val;
 
   Future<void> chechkData() async {
+    print('cek');
     var res = await _db.query(Anggota.tableName,
         where: "${Anggota.kolomNORUMAH} = ? AND "
             "${Anggota.kolomRT} = ? AND "
             "${Anggota.kolomRW} = ? AND "
-            "${Anggota.kolomSTATUS} = ?",
+            "${Anggota.kolomSTATUS} = ? AND "
+            "${Anggota.kolomNAMA} = ?",
         whereArgs: [
           addData[Anggota.kolomNORUMAH],
           addData[Anggota.kolomRT],
           addData[Anggota.kolomRW],
-          Status.statusID(addData[Anggota.kolomSTATUS].toString())
+          Status.statusID(addData[Anggota.kolomSTATUS].toString()),
+          addData[Anggota.kolomNAMA],
         ]);
+    print(res);
     if (res.isNotEmpty) {
       Anggota anggota = Anggota.fromMap(res.first);
       Map<String, dynamic> data = anggota.toMapString();
@@ -134,9 +129,12 @@ class AddDataController extends GetxController {
           textCancel: "Tidak",
           textConfirm: "Ya",
           confirmTextColor: Get.theme.scaffoldBackgroundColor,
-          content: cardAnggota(anggota: anggota),
-          onCancel: () =>
-              Get.until((route) => Get.currentRoute == Routes.dashboard),
+          content: cardAnggota(anggota: anggota, isDetail: true, elevation: 0),
+          onCancel: () {
+            Get.back();
+            Get.find<AppController>().selectedPage =
+                Get.find<AppController>().availablePages.keys.first;
+          },
           onConfirm: () {
             Get.back();
             isUpdate = true;
@@ -162,14 +160,15 @@ class AddDataController extends GetxController {
             Status.statusID(addData[Anggota.kolomSTATUS].toString())
           ],
         );
-        clearAddData();
       } else {
         await _db.insert(Anggota.tableName, anggota.toMap());
-        clearAddData();
       }
-      Get.back();
+
+      clearAddData();
+      Get.find<DataController>().fetchData();
+      Get.find<AppController>().selectedPage =
+          AppController().availablePages.keys.first;
     } catch (e) {
-      print(e);
       Get.snackbar("Oops", "Data dengan NIK tertera sudah ada",
           backgroundColor: Get.theme.secondaryHeaderColor);
     }

@@ -25,17 +25,19 @@ class DatabaseHandler {
 
   final String _queryCreateTableAnggota = '''
               CREATE TABLE ${Anggota.tableName} (
-                ${Anggota.kolomNIK} TEXT PRIMARY KEY,
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                ${Anggota.kolomNIK} TEXT,
                 ${Anggota.kolomNAMA} TEXT NOT NULL,
-                ${Anggota.kolomTGLLAHIR} TEXT,
-                ${Anggota.kolomNORUMAH} TEXT,
-                ${Anggota.kolomRT} TEXT,
-                ${Anggota.kolomRW} TEXT,
+                ${Anggota.kolomTGLLAHIR} TEXT NOT NULL,
+                ${Anggota.kolomNORUMAH} TEXT NOT NULL,
+                ${Anggota.kolomRT} TEXT NOT NULL,
+                ${Anggota.kolomRW} TEXT NOT NULL,
                 ${Anggota.kolomALAMAT} TEXT,
-                ${Anggota.kolomJK} INTEGER,
-                ${Anggota.kolomPEKERJAAN} INTEGER,
-                ${Anggota.kolomSTATUS} INTEGER,
-                ${Anggota.kolomDOMISILI} INTEGER
+                ${Anggota.kolomJK} INTEGER NOT NULL,
+                ${Anggota.kolomPEKERJAAN} INTEGER NOT NULL,
+                ${Anggota.kolomSTATUS} INTEGER NOT NULL,
+                ${Anggota.kolomDOMISILI} INTEGER NOT NULL,
+                ${Anggota.kolomCATATAN} TEXT
               )
               ''';
 

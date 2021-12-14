@@ -34,6 +34,7 @@ class _EditVariablePageState extends State<EditVariablePage> {
     final hasDrawer = ancestorScaffold != null && ancestorScaffold.hasDrawer;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Edit Variable Data"),
         leading: hasDrawer
             ? InkWell(

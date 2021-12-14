@@ -1,7 +1,6 @@
 import 'package:data_warga/bindings/bindings.dart';
 import 'package:data_warga/data/database/database_helper.dart';
 import 'package:data_warga/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';

@@ -1,4 +1,5 @@
 import 'package:data_warga/screens/dashboard/dashboard.dart';
+import 'package:data_warga/screens/dashboard/menu/add_data.dart';
 import 'package:data_warga/screens/dashboard/menu/export_import_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 class AppController extends GetxController {
   final availablePages = <String, Widget>{
     'Data Warga': const HomePage(),
+    'Input/Edit Data': const AddData(),
     'Edit Master': const EditVariablePage(),
     'Import/Export Data': const ExportImportPage(),
   };

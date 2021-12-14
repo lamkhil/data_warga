@@ -1,6 +1,7 @@
 import 'package:data_warga/data/database/database_helper.dart';
 import 'package:data_warga/data/database/filter_anggota.dart';
 import 'package:data_warga/data/models/anggota.dart';
+import 'package:data_warga/data/models/status.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
@@ -58,7 +59,7 @@ class DataController extends GetxController {
     super.onClose();
   }
 
-  fetchData() async {
+  fetchData({bool all = false}) async {
     final List<Map<String, dynamic>> maps = await _db.query(Anggota.tableName,
         where: filter != '' ? filter : null,
         orderBy: order != '' ? order : null);
@@ -67,8 +68,19 @@ class DataController extends GetxController {
   }
 
   void deleteData(Anggota listAnggota) {
-    _db.delete(Anggota.tableName,
-        where: "${Anggota.kolomNIK} = ? ", whereArgs: [listAnggota.nik]);
+    _db.delete(
+      Anggota.tableName,
+      where: "${Anggota.kolomNORUMAH} = ? AND "
+          "${Anggota.kolomRT} = ? AND "
+          "${Anggota.kolomRW} = ? AND "
+          "${Anggota.kolomSTATUS} = ?",
+      whereArgs: [
+        listAnggota.noRumah,
+        listAnggota.rt,
+        listAnggota.rw,
+        Status.statusID(listAnggota.status)
+      ],
+    );
     fetchData();
   }
 }

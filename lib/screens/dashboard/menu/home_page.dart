@@ -1,8 +1,6 @@
 import 'package:data_warga/controller/controller.dart';
 import 'package:data_warga/data/database/filter_anggota.dart';
-import 'package:data_warga/routes/routes.dart';
 import 'package:data_warga/widget/list_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,6 +16,7 @@ class HomePage extends GetView<DataController> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           flexibleSpace: SafeArea(
             child: Container(
               margin: const EdgeInsets.all(8),
@@ -67,14 +66,6 @@ class HomePage extends GetView<DataController> {
               ),
             ),
           ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            Get.toNamed(Routes.addData)!
-                .then((value) => controller.fetchData());
-          },
-          label: const Text('Input/Edit'),
-          icon: const Icon(Icons.add),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,13 +199,47 @@ class HomePage extends GetView<DataController> {
                                         ),
                                         child: PopupMenuButton(
                                             onSelected: (value) {
-                                              controller.deleteData(
-                                                  controller.listAnggota[i]);
+                                              if (value == 1) {
+                                                Get.defaultDialog(
+                                                  title: "Detail Data",
+                                                  content: cardAnggota(
+                                                      anggota: controller
+                                                          .listAnggota[i],
+                                                      isDetail: true,
+                                                      elevation: 0),
+                                                  textConfirm: "Tutup",
+                                                  confirmTextColor: Get.theme
+                                                      .scaffoldBackgroundColor,
+                                                  onConfirm: () => Get.back(),
+                                                );
+                                              }
+                                              if (value == 2) {
+                                                Get.defaultDialog(
+                                                  title: "Hapus Data",
+                                                  middleText:
+                                                      "Yakin mau hapus data ${controller.listAnggota[i].nama}?",
+                                                  textCancel: "Tidak",
+                                                  textConfirm: "Ya",
+                                                  confirmTextColor: Get.theme
+                                                      .scaffoldBackgroundColor,
+                                                  onCancel: () => Get.back(),
+                                                  onConfirm: () async {
+                                                    Get.back();
+                                                    controller.deleteData(
+                                                        controller
+                                                            .listAnggota[i]);
+                                                  },
+                                                );
+                                              }
                                             },
                                             itemBuilder: (context) => [
                                                   const PopupMenuItem(
-                                                    child: Text("Hapus Data"),
+                                                    child: Text("Detail Data"),
                                                     value: 1,
+                                                  ),
+                                                  const PopupMenuItem(
+                                                    child: Text("Hapus Data"),
+                                                    value: 2,
                                                   ),
                                                 ]),
                                       ))
